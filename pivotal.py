@@ -234,8 +234,7 @@ class Pivotal(object):
 
         return finished
 
-    def transition_story(self, story, state):
-
+    def set_state(self, story, state):
         """
         Change story state.
 
@@ -260,7 +259,7 @@ class Pivotal(object):
 
         rsp = req.json()
         if 'error' in rsp:
-            raise RuntimeError('Transition not successful:\n %s' % str(rsp))
+            raise RuntimeError('State change not successful:\n %s' % str(rsp))
         return req.json()
 
 
@@ -296,7 +295,7 @@ def transition_merged_stories():
 
             if pull['merged']:
                 print('Transitioning Story #%d' % story['id'], '(%s)' % story['owner'], story['name'], 'to "delivered".')
-                response = pivotal.transition_story(story['id'], 'delivered')
+                response = pivotal.set_state(story['id'], 'delivered')
                 pprint(response)
 
         print('------------')
