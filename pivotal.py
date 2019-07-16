@@ -262,6 +262,38 @@ class Pivotal(object):
             raise RuntimeError('State change not successful:\n %s' % str(rsp))
         return req.json()
 
+    def deliver(self, pull=None):
+        """
+        Deliver any stories that have the specied pull request attached.
+
+        Parameters
+        ---------
+        pull : int
+            The pull request number
+
+        Returns
+        -------
+        dict
+            The response from the server.
+        """
+
+        finished =  self.get_finished()
+
+        for story in finished:
+            print('------------')
+
+            print('{kind} #{id} ({state}), {owner}'.format(**story))
+            print(story['name'])
+
+            if story['pull']:
+                print('PR #%d' % story['pull'])
+                if story['pull'] == pull:
+                    print('Transitioning Story #%d' % story['id'], '(%s)' % story['owner'], story['name'], 'to "delivered".')
+                    response = self.set_state(story['id'], 'delivered')
+                    pprint(response)
+
+            print('------------')
+
 
 def transition_merged_stories():
     """
@@ -303,3 +335,4 @@ def transition_merged_stories():
 
 if __name__ == '__main__':
     transition_merged_stories()
+
