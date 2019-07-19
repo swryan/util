@@ -208,18 +208,24 @@ class Pivotal(object):
 
         return None
 
-    def get_finished(self):
+    def get_story_info(self, query):
         """
-        Get information about all stories in the finished state.
+        Get information about all stories that match the given query.
+
+        Parameters
+        ----------
+        query : str
+            A search query.
+            See: https://www.pivotaltracker.com/help/articles/advanced_search/
 
         Returns
         -------
         list
-            List of metadata dictionaries for each finished story.
+            List of metadata dictionaries for each matching story.
         """
-        stories = self.get_stories('state:finished')
+        stories = self.get_stories(query)
 
-        finished = []
+        info = []
 
         for story in stories:
             story_info = {
@@ -230,9 +236,9 @@ class Pivotal(object):
                 'owner': self.get_person(story['owned_by_id'])['name'],
                 'pull': self.get_pull(story)
             }
-            finished.append(story_info)
+            info.append(story_info)
 
-        return finished
+        return info
 
     def set_state(self, story, state):
         """
@@ -264,7 +270,7 @@ class Pivotal(object):
 
     def deliver(self, pull=None):
         """
-        Deliver any stories that have the specied pull request attached.
+        Deliver any started or finished stories that have the specied pull request attached.
 
         Parameters
         ---------
@@ -276,10 +282,9 @@ class Pivotal(object):
         dict
             The response from the server.
         """
+        stories =  self.get_story_info('state:started or state:finished')
 
-        finished =  self.get_finished()
-
-        for story in finished:
+        for story in stories:
             print('------------')
 
             print('{kind} #{id} ({state}), {owner}'.format(**story))
