@@ -3,6 +3,7 @@ from __future__ import print_function
 from pprint import pprint
 
 import os
+import sys
 
 import tornado.ioloop
 import tornado.web
@@ -52,6 +53,7 @@ class GitHubHandler(tornado.web.RequestHandler):
             if data['action'] == 'closed' and data['pull_request']['merged']:
                 print('ask pivotal to deliver PR #', data['number'])
                 pivotal.deliver(pull=data['number'])
+            sys.stdout.flush()
 
 
 if __name__ == "__main__":

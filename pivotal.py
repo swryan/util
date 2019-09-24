@@ -57,7 +57,7 @@ class GitHub(object):
 
     def get_pulls(self):
         """
-        Get story by ID.
+        Get information about pull requests.
 
         Returns
         -------
